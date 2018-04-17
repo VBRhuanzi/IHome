@@ -4,7 +4,7 @@ from flask import Flask
 from flask.ext.script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
-
+from flask_migrate import Migrate,MigrateCommand
 
 class Config(object):
     """配置参数：重写系统默认的配置参数"""
@@ -28,11 +28,17 @@ db = SQLAlchemy(app)
 # 创建redis数据库链接对象 :
 # store:仓库
 # strict : 严格的；绝对的；精确的；详细的
-# todo StrictRedis类里面指定了host和port的缺省默认参数，可以不指定参数
+# StrictRedis类里面指定了host和port的缺省默认参数，可以不指定参数
 redis_store = StrictRedis(host=Config.REDIS_HOST,port=Config.REDIS_PORT)
 
 # 创建脚本管理器
 manager = Manager(app)
+
+# 让迁移时，app和db建立链接,写注意不要搞反了
+Migrate(app,db)
+
+# 将数据库迁移的脚本、命令添加到脚本管理器对象
+manager.add_command('db', MigrateCommand)
 
 
 @app.route('/')
