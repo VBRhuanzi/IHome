@@ -5,6 +5,7 @@ from flask.ext.script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
 from flask_migrate import Migrate,MigrateCommand
+from flask_wtf import CSRFProtect
 
 class Config(object):
     """配置参数：重写系统默认的配置参数"""
@@ -30,6 +31,9 @@ db = SQLAlchemy(app)
 # strict : 严格的；绝对的；精确的；详细的
 # StrictRedis类里面指定了host和port的缺省默认参数，可以不指定参数
 redis_store = StrictRedis(host=Config.REDIS_HOST,port=Config.REDIS_PORT)
+
+#开启csrf保护
+CSRFProtect(app)
 
 # 创建脚本管理器
 manager = Manager(app)
