@@ -30,10 +30,12 @@ db = SQLAlchemy(app)
 # todo StrictRedis类里面指定了host和port的缺省默认参数，可以不指定参数
 redis_store = StrictRedis(host=Config.REDIS_HOST,port=Config.REDIS_PORT)
 
+a=111
 
 @app.route('/')
 def index():
     return index
+
 
 
 if __name__ == '__main__':
