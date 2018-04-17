@@ -1,6 +1,7 @@
 # coding:utf-8
 # 程序入口 日期：2018.4.17 时间： 开发者： frank
 from flask import Flask
+from flask.ext.script import Manager
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
 
@@ -12,8 +13,8 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/vbr_iHome"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    REDIS_HOST = 'localhost',
-    REDIS_PORT = 6379,
+    REDIS_HOST = 'localhost'
+    REDIS_PORT = 6379
 
 
 app = Flask(__name__)
@@ -30,13 +31,16 @@ db = SQLAlchemy(app)
 # todo StrictRedis类里面指定了host和port的缺省默认参数，可以不指定参数
 redis_store = StrictRedis(host=Config.REDIS_HOST,port=Config.REDIS_PORT)
 
-a=111
+# 创建脚本管理器
+manager = Manager(app)
+
 
 @app.route('/')
 def index():
-    return index
+    redis_store.set("key","value")
+    return "index"
 
 
 
 if __name__ == '__main__':
-    app.run()
+    manager.run()
