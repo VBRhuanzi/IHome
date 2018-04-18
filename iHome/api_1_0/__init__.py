@@ -4,5 +4,7 @@
 from flask import Blueprint
 
 # 创建1.0版本的蓝图
-api = Blueprint("api_1_0",__name__)
+api = Blueprint("api_1_0",__name__,url_prefix="/api/1.0")
 
+
+from . import index

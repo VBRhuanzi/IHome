@@ -3,11 +3,11 @@
 
 from flask.ext.script import Manager
 from flask_migrate import Migrate, MigrateCommand
-
-
-
+from flask import current_app
 # from iHome import app,db
 from iHome import get_app,db
+
+# from iHome import models # 没有实际意义，只在迁移前告知迁移脚本，有哪些模型类
 
 app = get_app('dev')
 
@@ -21,14 +21,11 @@ Migrate(app, db)
 manager.add_command('db', MigrateCommand)
 
 
-@app.route('/')
-def index():
-    # redis_store.set("key", "value")
-    #
-    # session["name"] = 'ketty'
-
-    return "index"
 
 
 if __name__ == '__main__':
+
+    print app.url_map
+
     manager.run()
+    # current_app.run()
