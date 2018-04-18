@@ -7,6 +7,7 @@ from flask_wtf import CSRFProtect
 from flask_session import Session
 from config import Config
 from config import config
+from utils.common import RegexConverter
 
 # 把redis数据库链接对象定义为全区
 redis_store = None
@@ -42,6 +43,9 @@ def get_app(config_name):
     # 使用flask_session将session数据写入redis数据库
     Session(app)
 
+    # 将自定义的路由转换器添加到路由转换器列表
+    app.url_map.converters["re"] = RegexConverter
+
 
     # 注册api蓝图
     # 哪里注册蓝图就在哪里使用蓝图，避免某些变量在导入时还不存在，但是已经被导入
@@ -51,6 +55,8 @@ def get_app(config_name):
     # 注册处理静态文件html蓝图
     from iHome.web_html import html_bule
     app.register_blueprint(html_bule)
+
+    #
 
 
     return app
