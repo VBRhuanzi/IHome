@@ -1,4 +1,5 @@
 # coding:utf-8
+import logging
 import redis
 
 
@@ -30,7 +31,9 @@ class Config(object):
 
 class Development(Config):
     """开发模式下配置"""
-    pass
+
+    # 调试级别
+    LOGGING_LEVEL = logging.DEBUG
 
 
 
@@ -43,13 +46,16 @@ class Production(Config):
     # 设置session的过期时间
     PERMANENT_SESSION_LIFETIME = 3600 * 24  # 有效期为一天
 
+    LOGGING_LEVEL = logging.WARN
+
+
 
 class UnitTest(Config):
     """测试环境"""
     pass
 
 
-config = {
+configs = {
     "dev":Development,
     "pro":Production,
     "test":UnitTest

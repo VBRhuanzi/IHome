@@ -6,8 +6,8 @@ from flask_migrate import Migrate, MigrateCommand
 from flask import current_app
 # from iHome import app,db
 from iHome import get_app,db
-
-# from iHome import models # 没有实际意义，只在迁移前告知迁移脚本，有哪些模型类
+from iHome import models
+ # 没有实际意义，只在迁移前告知迁移脚本，有哪些模型类
 
 app = get_app('dev')
 

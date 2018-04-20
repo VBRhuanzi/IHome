@@ -19,11 +19,6 @@ def get_static_html(file_name):
         # 拼接静态文件路径
         file_name = 'html/%s' % file_name
 
-
-
-
-    print file_name
-
     # 根据file_name拼接的全路径，去项目路径中查找静态html文件，并响应给浏览器
     return current_app.send_static_file(file_name)
 

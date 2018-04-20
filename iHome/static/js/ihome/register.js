@@ -31,6 +31,7 @@ function generateImageCode() {
 function sendSMSCode() {
     // 校验参数，保证输入框有数据填写
     $(".phonecode-a").removeAttr("onclick");
+
     var mobile = $("#mobile").val();
     if (!mobile) {
         $("#mobile-err span").html("请填写正确的手机号！");
@@ -47,6 +48,49 @@ function sendSMSCode() {
     }
 
     // TODO: 通过ajax方式向后端接口发送请求，让后端发送短信验证码
+    var params = {
+        'mobile':mobile,
+        'imageCode':imageCode,
+        'uuid':uuid
+    };
+
+    $.ajax({
+        url:'/api/1.0/sms_code',
+        type:'post',
+        data:JSON.stringify(params),
+        contentType:'application/json',
+        headers:{'X-CSRFToken':getCookie('csrf_token')},
+        success:function (response) {
+            if (response.errno == '0') {
+                // 发送成功后，进行倒计时
+                var num = 60;
+                var t = setInterval(function ()  {
+                    if (num == 0) {
+                        // 倒计时完成,清除定时器
+                        clearInterval(t);         // 重新生成验证码
+                        generateImageCode();
+                        // 重置内容
+                        $(".phonecode-a").html('获取验证码');
+                        // 重新添加点击事件
+                        $(".phonecode-a").attr("onclick", "sendSMSCode();");
+                    } else {
+                        // 正在倒计时，显示秒数
+                        $(".phonecode-a").html(num + '秒');
+                    }
+
+                    num = num - 1;
+                }, 1000);
+
+            } else {
+                // 重新添加点击事件
+                $(".phonecode-a").attr("onclick", "sendSMSCode();");
+                // 重新生成验证码
+                generateImageCode();
+                // 弹出错误消息
+                alert(response.errmsg);
+            }
+        }
+    });
 }
 
 $(document).ready(function() {
@@ -70,4 +114,57 @@ $(document).ready(function() {
     });
 
     // TODO: 注册的提交(判断参数是否为空)
+    $('.form-register').submit(function (event) {
+        // 监听表单的提交事件，并把默认的提交动作禁用掉，然后使用自己写的ajax发送注册请求
+        event.preventDefault();
+
+        // 获取手机号,短信验证码,密码和确认密码
+        var mobile = $('#mobile').val();
+        var sms_code = $('#phonecode').val();
+        var password = $('#password').val();
+        var password2 = $('#password2').val();
+
+        // 校验参数是否为空
+        if (!mobile) {
+            $('#mobile-err span').html('请输入手机号');
+            $('#mobile-err').show();
+            return;
+        }
+        if (!sms_code) {
+            $('#phone-code-err span').html('请输入短信验证码');
+            $('#phone-code-err').show();
+            return;
+        }
+        if (!password) {
+            $("#password-err span").html("请填写密码!");
+            $("#password-err").show();
+            return;
+        }
+        if (password != password2) {
+            $("#password2-err span").html("两次密码不一致!");
+            $("#password2-err").show();
+            return;
+        }
+
+        var params = {
+            'mobile':mobile,
+            'sms_code':sms_code,
+            'password':password
+        };
+
+        $.ajax({
+            url:'/api/1.0/users',
+            type:'post',
+            data:JSON.stringify(params),
+            contentType:'application/json',
+            headers:{'X-CSRFToken':getCookie('csrf_token')},
+            success:function (response) {
+                if (response.errno == '0') {
+                    location.href = '/'; // 进入主页
+                } else {
+                    alert(response.errmsg);
+                }
+            }
+        });
+    });
 });
