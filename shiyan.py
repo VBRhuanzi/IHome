@@ -1,4 +1,5 @@
 
+
 class A(object):
 
     def __new__(cls, *args, **kwargs):
@@ -17,3 +18,4 @@ B.cc = a
 
 if hasattr(B,"cc"):
     print '0.o'
+

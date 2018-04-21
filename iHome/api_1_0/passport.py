@@ -35,7 +35,7 @@ def register():
     # 2.判断参数是否缺少
     if not all([mobile, sms_code_client, password]):
         return jsonify(errno=RET.PARAMERR, errmsg='缺少参数')
-    if not re.match(r'^1[345678][0-9]{9}$', mobile):
+    if not re.match(r'^1([358][0-9]|4[579]|66|7[0135678]|9[89])[0-9]{8}$', mobile):
         return jsonify(errno=RET.PARAMERR, errmsg='手机号格式错误')
 
     # 3.获取服务器存储的短信验证码
@@ -56,7 +56,7 @@ def register():
     user.mobile = mobile
     user.name = mobile # 默认把手机号作为用户名，如果不喜欢，后面会提供修改用户名的接口
     # 需要将密码加密后保存到数据库:调用password属性的setter方法
-    user.password = password
+    user.password_hash = password
 
     # 6.将模型属性写入到数据库
     try:

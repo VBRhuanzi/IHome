@@ -60,9 +60,9 @@ class CCP(object):
 #
 #
 #     #≥ı ºªØREST SDK
-#     rest = REST(serverIP,serverPort,softVersion)
-#     rest.setAccount(accountSid,accountToken)
-#     rest.setAppId(appId)
+    rest = REST(serverIP,serverPort,softVersion)
+    rest.setAccount(accountSid,accountToken)
+    rest.setAppId(appId)
 #
 #     result = rest.sendTemplateSMS(to,datas,tempId)
 #     for k,v in result.iteritems():

@@ -1,7 +1,7 @@
 # coding:utf-8
 # 图片验证和短信验证
 import logging
-import re,random
+import re, random
 
 from iHome import constants
 from iHome import redis_store
@@ -30,7 +30,7 @@ def send_sms_code():
     josn_str = request.data
     josn_dict = json.loads(josn_str)
 
-    print ">"*50,josn_dict
+    print ">" * 50, josn_dict
 
     mobile = josn_dict.get("mobile")
     imageCode_client = josn_dict.get("imageCode")
@@ -44,7 +44,7 @@ def send_sms_code():
 
     # 获取服务器存储的验证码
     try:
-        imageCode_server = redis_store.get('ImageCode:%s' % last_uuid)
+        imageCode_server = redis_store.get('ImageCode:%s' % uuid)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg="查询验证码错误")
@@ -56,25 +56,25 @@ def send_sms_code():
     if imageCode_client.lower() != imageCode_server.lower():
         return jsonify(errno=RET.DBERR, errmsg="验证码输入有误")
 
-    #如果对比成功就生成短信验证码
+    # 如果对比成功就生成短信验证码
     # "%06d"-不够六位补零
-    sms_code = "%06d" % random.randint(0,999999)
+    sms_code = "%06d" % random.randint(0, 999999)
 
-    result = CCP().send_sms_code(mobile,[sms_code,5],1)
-    print ">"*80
-
-    if result != 1:
-        return jsonify(errno=RET.THIRDERR,errmsg="发送短信验证码失败")
+    # result = CCP().send_sms_code(mobile, [sms_code, 5], 1)
+    #
+    #
+    # if result != 1:
+    #     return jsonify(errno=RET.THIRDERR, errmsg="发送短信验证码失败")
+    print "_"*30,sms_code
 
     try:
-        redis_store.set("SMS:%s" % mobile,sms_code,constants.SMS_CODE_REDIS_EXPIRES)
+        redis_store.set("SMS:%s" % mobile, sms_code, constants.SMS_CODE_REDIS_EXPIRES)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg='存储短信验证码失败')
 
         # 8.响应发送短信的结果
     return jsonify(errno=RET.OK, errmsg='发送短信验证码成功')
-
 
 
 last_uuid = ''
@@ -109,7 +109,7 @@ def get_image_code():
         # 过期时间300秒
         redis_store.set('ImageCode:%s' % uuid, text, constants.IMAGE_CODE_REDIS_EXPIRES)
     except Exception as e:
-        print ">>>>>>>>>>>>>>>", e
+
         logging.error(e)
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg='保存验证码失败')
