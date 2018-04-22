@@ -32,5 +32,8 @@ def get_static_html(file_name):
     # 根据file_name拼接的全路径，去项目路径中查找静态html文件，并响应给浏览器
     return response
 
-
+    # response = make_response(jsonify(errno=RET.OK, errmsg='注册成功'))
+    # # scc
+    # response.set_cookie()
+    #
 

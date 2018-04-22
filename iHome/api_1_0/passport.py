@@ -23,7 +23,7 @@ def login():
        """
     # 1.接受登录参数：手机号，密码明文
     json_dict = request.json
-    print "<>"*20,type(json_dict)
+
     mobile = json_dict.get('mobile')
     password = json_dict.get('password')
 
@@ -43,10 +43,11 @@ def login():
         return jsonify(errno=RET.NODATA, errmsg='用户名或密码错误')
 
     # 4.对比用户的密码
-    if not password == user.password_hash:
-        return jsonify(errno=RET.NODATA, errmsg='用户名或密码错误')
-    # if not user.check_password(password):
+    # if not password == user.password_hash:
     #     return jsonify(errno=RET.NODATA, errmsg='用户名或密码错误')
+
+    if not user.check_password(password):
+        return jsonify(errno=RET.NODATA, errmsg='用户名或密码错误')
     # 5.写入状态保持信息到session
 
     session["user_id"] = user.id
@@ -103,7 +104,7 @@ def register():
     user.mobile = mobile
     user.name = mobile # 默认把手机号作为用户名，如果不喜欢，后面会提供修改用户名的接口
     # 需要将密码加密后保存到数据库:调用password属性的setter方法
-    user.password_hash = password
+    user.password = password
 
     # 6.将模型属性写入到数据库
     try:
