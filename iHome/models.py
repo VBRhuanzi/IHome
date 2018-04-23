@@ -45,7 +45,8 @@ class User(BaseModel, db.Model):
         """向视图返回封装响应的字典"""
         response_info_dict = {
             'user_id': self.id,
-            'avatar_url': self.avatar_url,
+            #                         七牛云的文件访问路径＋文件唯一标示
+            'avatar_url': constants.QINIU_DOMIN_PREFIX + self.avatar_url,
             'name': self.name,
             'mobile': self.mobile
         }

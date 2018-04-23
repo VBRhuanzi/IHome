@@ -2,14 +2,14 @@
 # 个人中心
 from iHome import db,constants
 from iHome.api_1_0 import api
-from flask import session, current_app, jsonify,request,
+from flask import session, current_app, jsonify,request
 from iHome.models import User
 from iHome.utils.response_code import RET
 from iHome.utils.image_storage import upload_image
 
 
 
-@api.route("/user/avatar",methods=["POST"])
+@api.route("/users/avatar",methods=["POST"])
 def upload_avatar():
     """
     上传用户头像
