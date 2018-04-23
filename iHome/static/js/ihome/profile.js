@@ -16,7 +16,7 @@ $(document).ready(function () {
      $.get('/api/1.0/users',function (response) {
         if  (response.error = '0'){
             $('#user-avatar').attr('src',response.data.avatar_url);
-            $('#user-name').val(response.data.mobile);
+            $('#user-name').val(response.data.name);
         }
         else{
             alert(response.error)
@@ -43,6 +43,32 @@ $(document).ready(function () {
 
 
     // TODO: 管理用户名修改的逻辑
+    $('#form-name').submit(function (e) {
+        e.preventDefault();
+
+        var user_name = $('#user-name').val();
+        if (!user_name) {
+            alert('请输入用户名')
+        }
+        var params = {
+            'user_name':user_name
+        };
+        $.ajax({
+            url:"/api/1.0/users/name",
+            type:'put',
+            data:JSON.stringify(params),
+            contentType:'application/json',
+            headers:{'X-CSRFToken':getCookie('csrf_token')},
+            success:function (response) {
+            if (response.errno == '0') {
+                $('#user-avatar').attr('src', response.data);
+                showSuccessMsg()
+            } else {
+                alert(response.errmsg);
+            }
+        }
+        })
+    })
 
 });
 
