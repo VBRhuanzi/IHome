@@ -2,13 +2,14 @@
 # 个人中心
 from iHome import db,constants
 from iHome.api_1_0 import api
-from flask import session, current_app, jsonify,request
+from flask import session, current_app, jsonify,request,g
 from iHome.models import User
 from iHome.utils.response_code import RET
 from iHome.utils.image_storage import upload_image
-
+from iHome.utils.common import login_required
 
 @api.route("/users/name",methods=["PUT"])
+@login_required
 def set_user_name():
     """修改用户名
         0.TODO 判断用户是否登录
@@ -18,6 +19,11 @@ def set_user_name():
         4.将数据保存到数据库
         5.响应修改用户名的结果
        """
+    # 2.查询当前的登录用户
+    # 下面方式取不到数据会报错，选用get取得数据,返回None
+    # user_id = session["user_id"]
+    user_id = g.user_id
+
     # 1.获取新的用户名，并判断是否为空
     try:
         user_name = request.json.get('user_name')
@@ -26,8 +32,7 @@ def set_user_name():
         return jsonify(errno=RET.PARAMERR, errmsg='缺少必传参数')
     print user_name
 
-    # 2.查询当前的登录用户
-    user_id = session["user_id"]
+
     try:
         user = User.query.get(user_id)
     except Exception as e:
@@ -49,14 +54,8 @@ def set_user_name():
     return jsonify(errno=RET.OK, errmsg="OK")
 
 
-
-
-
-
-
-
-
 @api.route("/users/avatar",methods=["POST"])
+@login_required
 def upload_avatar():
     """
     上传用户头像
@@ -68,6 +67,11 @@ def upload_avatar():
     5.将数据保存到数据库
     6.响应上传用户头像的结果
     """
+    # 2.查询当前的登录用户
+    # 下面方式取不到数据会报错，选用get取得数据
+    # user_id = session["user_id"]
+    user_id = g.user_id
+
     # 1. 获取用户上传的头像数据，并校验
     try:
         avatar_data = request.files.get("avatar")
@@ -75,8 +79,7 @@ def upload_avatar():
         current_app.logger.error(e)
         return jsonify(errno=RET.PARAMERR, errmsg='获取用户头像失败')
 
-    # 2.查询当前的登录用户
-    user_id = session["user_id"]
+
     try:
         user = User.query.get(user_id)
     except Exception as e:
@@ -107,6 +110,7 @@ def upload_avatar():
 
 
 @api.route("/users", methods=["GET"])
+@login_required
 def get_user_info():
     """提供个人信息
         0.TODO 判断用户是否登录
@@ -116,8 +120,10 @@ def get_user_info():
         4.响应个人信息的结果
         """
     # 1.从session中获取当前登录用户的user_id
-    user_id = session["user_id"]
+    # 下面方式取不到数据会报错，选用get取得数据
+    # user_id = session["user_id"]
 
+    user_id = g.user_id
     # 2.查询当前登录用户的user信息
     try:
         user = User.query.get(user_id)
