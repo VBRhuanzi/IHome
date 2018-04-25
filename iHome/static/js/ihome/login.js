@@ -40,7 +40,7 @@ $(document).ready(function() {
             success:function (response) {
                 if (response.errno == '0') {
                     // 登录成功进入首页
-                    location.href = '/index.html';
+                    location.href = 'my.html';
                 } else {
                     alert(response.errmsg);
                 }

@@ -26,7 +26,7 @@ def upload_image(image_data):
         key = ret.get('key')
         return key
     else:
-        raise Exception('上传图片失败')
+        raise Exception('上传图片失败!!!')
 
     # print 'RET',ret
     # print 'INFO',info

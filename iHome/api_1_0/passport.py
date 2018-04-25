@@ -1,13 +1,34 @@
 # -*- coding:utf-8 -*-
 # 登录注册
-
-
+from iHome.utils.common import login_required
 from . import api
 from flask import request, jsonify, current_app,session
 import json, re
 from iHome.utils.response_code import RET
 from iHome import redis_store,db
 from iHome.models import User
+
+
+@api.route("/sessions", methods=["GET"])
+def check_login():
+    user_id = session.get("user_id")
+    user_name = session.get("name")
+
+    return jsonify(errno=RET.OK, errmsg='OK', data={"user_id": user_id, "user_name": user_name})
+
+# 退出登录
+@api.route("/session",methods=["DELETE"])
+@login_required
+def logout():
+    """退出登录
+    0.判断用户是否登录
+    1.清理session数据
+    """
+    session.pop('user_id')
+    session.pop('name')
+    session.pop('mobile')
+
+    return jsonify(errno=RET.OK, errmsg='退出登录成功')
 
 
 @api.route("/sessions",methods=['POST'])
@@ -57,7 +78,7 @@ def login():
     # 6.响应登录结果
     return jsonify(errno=RET.OK, errmsg='登录成功')
 
-
+# 注册
 @api.route('/users', methods=['POST'])
 def register():
     """注册
